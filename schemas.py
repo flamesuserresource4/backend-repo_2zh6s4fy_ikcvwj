@@ -12,9 +12,10 @@ Model name is converted to lowercase for the collection name:
 """
 
 from pydantic import BaseModel, Field
-from typing import Optional
+from typing import Optional, Literal
+from datetime import datetime
 
-# Example schemas (replace with your own):
+# Example schemas (you can keep using these if helpful):
 
 class User(BaseModel):
     """
@@ -38,11 +39,14 @@ class Product(BaseModel):
     category: str = Field(..., description="Product category")
     in_stock: bool = Field(True, description="Whether product is in stock")
 
-# Add your own schemas here:
-# --------------------------------------------------
-
-# Note: The Flames database viewer will automatically:
-# 1. Read these schemas from GET /schema endpoint
-# 2. Use them for document validation when creating/editing
-# 3. Handle all database operations (CRUD) directly
-# 4. You don't need to create any database endpoints!
+# Money management app schema
+class Transaction(BaseModel):
+    """
+    Transactions collection schema
+    Collection name: "transaction"
+    """
+    amount: float = Field(..., description="Positive number for both income and expense")
+    type: Literal["income", "expense"] = Field(..., description="Transaction type")
+    category: str = Field(..., description="Category such as Salary, Food, Rent")
+    note: Optional[str] = Field(None, description="Optional note")
+    date: datetime = Field(default_factory=datetime.utcnow, description="When the transaction happened")
